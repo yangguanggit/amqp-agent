@@ -1,0 +1,21 @@
+# ide project files
+.DS_Store
+.idea
+# temp files
+/tmp
+/web/tmp
+/lastupdate.tmp
+/project.log
+# vendor
+/vendor
+# log
+/log
+/logs
+/runtime
+# main
+main
+/main.go
+# redis
+dump.rdb
+# so many conflicts
+go.sum
