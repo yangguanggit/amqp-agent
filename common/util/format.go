@@ -6,12 +6,12 @@ import (
 	"net/http"
 )
 
-type mErr struct {
+type customErr struct {
 	Code    int
 	Message string
 }
 
-func (e mErr) Error() string {
+func (e customErr) Error() string {
 	return e.Message
 }
 
@@ -41,7 +41,7 @@ func Fail(ctx *gin.Context, errs ...interface{}) {
 			message = constant.ErrorMessage(code)
 		case string:
 			message = value
-		case mErr:
+		case customErr:
 			code = value.Code
 			message = value.Message
 		case error:
@@ -63,7 +63,7 @@ func Fail(ctx *gin.Context, errs ...interface{}) {
  * 可选:系统错误，自定义业务错误信息
  */
 func Error(code int, errs ...interface{}) error {
-	err := mErr{
+	err := customErr{
 		Code:    code,
 		Message: constant.ErrorMessage(code),
 	}
