@@ -2,20 +2,27 @@ package util
 
 import (
 	"amqp-agent/common/constant"
-	"errors"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
+
+type mErr struct {
+	Code    int
+	Message string
+}
+
+func (e mErr) Error() string {
+	return e.Message
+}
 
 /**
  * 成功
  */
 func Success(ctx *gin.Context, data interface{}) {
 	d := gin.H{
-		"code":      constant.ErrorOk,
-		"message":   constant.ErrorMessage(constant.ErrorOk),
-		"data":      data,
-		"requestId": "",
+		"code":    constant.ErrorOk,
+		"message": constant.ErrorMessage(constant.ErrorOk),
+		"data":    data,
 	}
 	ctx.Set(constant.SysResponseDataKey, d)
 	ctx.JSON(http.StatusOK, d)
@@ -34,15 +41,17 @@ func Fail(ctx *gin.Context, errs ...interface{}) {
 			message = constant.ErrorMessage(code)
 		case string:
 			message = value
+		case mErr:
+			code = value.Code
+			message = value.Message
 		case error:
 			message = value.Error()
 		}
 	}
 	data := gin.H{
-		"code":      code,
-		"message":   message,
-		"data":      gin.H{},
-		"requestId": "",
+		"code":    code,
+		"message": message,
+		"data":    gin.H{},
 	}
 	ctx.Set(constant.SysResponseDataKey, data)
 	ctx.JSON(http.StatusOK, data)
@@ -54,13 +63,16 @@ func Fail(ctx *gin.Context, errs ...interface{}) {
  * 可选:系统错误，自定义业务错误信息
  */
 func Error(code int, errs ...interface{}) error {
-	err := errors.New(constant.ErrorMessage(code))
+	err := mErr{
+		Code:    code,
+		Message: constant.ErrorMessage(code),
+	}
 	for _, e := range errs {
 		switch value := e.(type) {
 		case string:
-			err = errors.New(value)
+			err.Message = value
 		case error:
-			err = value
+			err.Message = value.Error()
 		}
 	}
 
