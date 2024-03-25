@@ -72,7 +72,7 @@ func (m *MQ) State() uint8 {
 	return m.state
 }
 
-func (m MQ) dial() (*amqp.Connection, error) {
+func (m *MQ) dial() (*amqp.Connection, error) {
 	return amqp.Dial(m.addr)
 }
 
