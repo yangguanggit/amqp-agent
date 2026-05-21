@@ -93,7 +93,11 @@ func (c *Consumer) deliver(opt *ConsumeOption, delivery <-chan amqp.Delivery) {
 
 	for i := 1; i <= opt.MessageCount; i++ {
 		select {
-		case d := <-delivery:
+		case d, ok := <-delivery:
+			if !ok {
+				close(c.callback)
+				return
+			}
 			c.callback <- d
 			if i >= opt.MessageCount {
 				//消息数量达到关闭通道
