@@ -4,6 +4,7 @@ import (
 	"amqp-agent/common/constant"
 	"amqp-agent/common/logger"
 	"amqp-agent/common/mq"
+	"amqp-agent/common/util"
 	"context"
 	"github.com/streadway/amqp"
 	"time"
@@ -62,6 +63,5 @@ func (c *Consumer) DeQueue(ctx context.Context, queueName string, messageCount, 
 
 //确认消息
 func (c *Consumer) Ack(ctx context.Context, queueName string, messageIdList []string) error {
-	//todo pull、ack分离
-	return nil
+	return util.Error(constant.ErrorSystemError, "消息确认尚未实现，请勿调用 /amqp/queue/ack")
 }
