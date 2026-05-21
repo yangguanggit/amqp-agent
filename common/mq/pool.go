@@ -86,6 +86,9 @@ func (p *GenericPool) getOrCreate() (*MQ, error) {
 	// 新建连接
 	resource, err := p.factory()
 	if err != nil {
+		p.Lock()
+		p.numOpen--
+		p.Unlock()
 		return nil, err
 	}
 	return resource, nil
